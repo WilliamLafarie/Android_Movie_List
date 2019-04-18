@@ -2,27 +2,37 @@ package com.example.partiel_mobile_api.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Movie(): Parcelable {
-    lateinit var name: String
-    lateinit var image: String
 
-    constructor(name: String, image:String) : this() {
-        this.name = name
-        this.image = image
+    @JsonProperty(value = "name")
+    lateinit var title: String
+
+    @JsonProperty(value = "image")
+    lateinit var posterUrl: String
+
+    @JsonProperty(value = "description")
+    lateinit var overview:String
+
+    constructor(title:String, posterUrl:String, overview:String): this() {
+        this.title = title
+        this.posterUrl = posterUrl
+        this.overview = overview
     }
-
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(name)
-        parcel.writeString(image)
+        parcel.writeString(title)
+        parcel.writeString(posterUrl)
+        parcel.writeString(overview)
     }
 
-
     constructor(parcel: Parcel) : this() {
-        name = parcel.readString()
-        image = parcel.readString()
+        title = parcel.readString()
+        posterUrl = parcel.readString()
+        overview = parcel.readString()
     }
 
     override fun describeContents(): Int {

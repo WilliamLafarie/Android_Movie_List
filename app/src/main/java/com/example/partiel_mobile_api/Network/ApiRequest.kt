@@ -1,63 +1,59 @@
 package com.example.partiel_mobile_api.Network
 
-import android.os.Build.VERSION_CODES.O
 import android.util.Log
-import com.android.volley.NetworkResponse
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.Response.Listener
 import com.android.volley.VolleyError
-import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.StringRequest
-import com.example.partiel_mobile_api.model.Movie
+import com.android.volley.toolbox.JsonObjectRequest
 import com.example.partiel_mobile_api.MovieApp
-import org.json.JSONArray
+import com.example.partiel_mobile_api.model.Movie
+import org.json.JSONException
 import org.json.JSONObject
 
 class ApiRequest {
     companion object {
-        fun requestMovie(query: String) {
-
-            val apiUrl = ApiConnect.searchUrl(query)
+        fun requestMovie(success: (movies: MutableList<Movie>) -> Unit, error: (error: VolleyError?) ->Unit) {
+            val apiUrl = ApiConnect.searchUrl()
             Log.wtf("URL", apiUrl)
 
-            val stringRequest = StringRequest(Request.Method.GET, apiUrl,
-                Listener<String> { success ->
 
-                    var resultString = success.toString()
-                    var resultObject = JSONObject(resultString)
-                    val movie = resultObject.getJSONArray("results")
 
-                    var title: String = ""
-                    var image: String = ""
+            val arrayRequest = JsonObjectRequest(Request.Method.GET, apiUrl, null,
+                Response.Listener<JSONObject>{ success ->
+                    val listOfMovies = mutableListOf<Movie>()
 
-                    for (i in 0 until movie.length()) {
-                        var movieObject: JSONObject = movie.getJSONObject(i)
-                        title += movieObject.get("name")
-                        image += movieObject.getJSONObject("image").get("medium_url")
+                    try {
+                        val dataMovie = success.getJSONArray("results")
 
-                        Movie(title, image)
+
+
+
+                        for (i in 0 until dataMovie.length()) {
+                            var movie = dataMovie.getJSONObject(i)
+                            var title = movie.get("name").toString()
+                            var poster_url = movie.getJSONObject("image").get("small_url").toString()
+                            var overview = movie.get("description").toString()
+
+                            listOfMovies.add(Movie(title,poster_url,overview))
+                        }
+
+                    } catch (e:JSONException) {
+                        e.printStackTrace()
+
                     }
 
-
-
-                    Log.wtf("Title", title)
-                    Log.wtf("Img", image)
-
-
-
-
-
-
-
-
+                    success(listOfMovies)
                 },
-                Response.ErrorListener { failure ->
-                    Log.wtf("ERROR", failure.toString())
-                    Log.wtf("ERRORDEMERDE", "MARCHE PAS MDRERE")
+
+                Response.ErrorListener { error ->
+                    Log.wtf("ERROR", error.toString())
                 }
+
+
             )
-            MovieApp.requestQueue.add(stringRequest)
+            MovieApp.requestQueue.add(arrayRequest)
+
+
         }
 
     }

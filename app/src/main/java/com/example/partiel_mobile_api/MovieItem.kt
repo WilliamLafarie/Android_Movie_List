@@ -48,9 +48,14 @@ class MovieItem(val movie: Movie): AbstractItem<MovieItem, MovieItem.MovieViewHo
             // On va récupérer chacune des informations de notre movie
             // et on les affiche dans les composants de la cellule (label, …)
 
-            itemView.cell_title.text = movie.name
+            itemView.cell_title.text = movie.title
+
+            Glide
+                .with(itemView.cell_picture)
+                .load(movie.posterUrl)
+                .into(itemView.cell_picture)
+        }
 
 
         }
     }
-}

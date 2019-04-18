@@ -3,17 +3,11 @@ package com.example.partiel_mobile_api
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.partiel_mobile_api.Network.ApiRequest
-import com.example.partiel_mobile_api.Network.ApiRequest.Companion.requestMovie
-import com.example.partiel_mobile_api.model.Movie
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
 import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONArray
-import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,11 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // On va créer un adaptateur dont le rôle sera de fournir
-        // des cellules à la RecyclerView
-
-        moviesAdapter = FastItemAdapter<MovieItem>()
-
+        moviesAdapter = FastItemAdapter()
         // On lie le moviesAdapter à la RecyclerView
         // pour que la RecyclerView sache à qui demander les cellules
         RecyclerView.adapter = moviesAdapter
@@ -39,28 +29,41 @@ class MainActivity : AppCompatActivity() {
         // Ici on créé un LinearLayoutManager (vertical, par défaut)
         RecyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Exemple pour afficher une liste à l'horizontal
-
-        /*RecyclerView.layoutManager = LinearLayoutManager(this,
-            RecyclerView.HORIZONTAL, false)*/
-
 
         // Ajout d'une ligne de séparation entre chaque cellule
-        //RecyclerView.addItemDecoration(DividerItemDecoration(this, RecyclerView.VERTICAL))
+        RecyclerView.addItemDecoration(DividerItemDecoration(this,LinearLayoutManager.VERTICAL))
 
-        // Bonus pour afficher les cellules sous forme de grille (ici à 2 colonnes)
-        //moviesRecyclerView.layoutManager = GridLayoutManager(this, 2)
+        moviesAdapter.withOnClickListener { view, adapter, item, position ->
+            val movie = item.movie
+            val intent = MovieDetailActivity.createIntent(this, movie)
+
+            //On démarre l'activité des détails de films
+            startActivity(intent)
+
+            true
+        }
+
 
 
         // Ajout d'un listener pour récupérer la recherche tapée par l'utilisateur
         // dans le champ de recherche
 
-        findMovie("Dare")
-
+        findMovies()
 
     }
 
-    fun findMovie(query: String) {
-        requestMovie(query)
+    fun findMovies() {
+        Log.wtf("FINDMOVIE", "OK")
+        ApiRequest.requestMovie({resultMovies ->
+            moviesAdapter.clear()
+            Log.wtf("APIREQUEST", "OK")
+            Log.wtf("APIREQUEST", resultMovies[0].title)
+
+
+            for (movie in resultMovies) {
+                moviesAdapter.add(MovieItem(movie))
+            }
+        }, {
+        })
     }
 }
