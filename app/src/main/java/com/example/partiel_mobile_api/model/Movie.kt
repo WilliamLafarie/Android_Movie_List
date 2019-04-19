@@ -5,16 +5,29 @@ import android.os.Parcelable
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
+/*
+
+    [Class Movie]
+
+    Model of each object Movie
+
+    List of properties:
+        - title: Title of the movie
+        - posterUrl: poster's url of the movie
+        - overview: Overview of the movie
+
+*/
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 class Movie(): Parcelable {
 
-    @JsonProperty(value = "name")
+    @JsonProperty(value = "title")
     lateinit var title: String
 
-    @JsonProperty(value = "image")
+    @JsonProperty(value = "posterUrl")
     lateinit var posterUrl: String
 
-    @JsonProperty(value = "description")
+    @JsonProperty(value = "overview")
     lateinit var overview:String
 
     constructor(title:String, posterUrl:String, overview:String): this() {

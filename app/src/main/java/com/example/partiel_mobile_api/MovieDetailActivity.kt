@@ -4,15 +4,21 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.WebView
 import com.bumptech.glide.Glide
 import com.example.partiel_mobile_api.model.Movie
 import kotlinx.android.synthetic.main.activity_movie_detail.*
 import kotlinx.android.synthetic.main.cell_movie.view.*
 
+/*
+
+    [Class MovieDetailsActivity]
+
+*/
+
 class MovieDetailActivity : AppCompatActivity() {
 
     companion object {
-        // Création d'une méthode statique pour générer et remplir un nouvel Intent
 
         private val EXTRA_MOVIE = "extra_movie"
 
@@ -24,13 +30,16 @@ class MovieDetailActivity : AppCompatActivity() {
         }
     }
 
+    private var mywebview: WebView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
 
         val movie = intent.getParcelableExtra<Movie>(EXTRA_MOVIE)
+        mywebview = findViewById<WebView>(R.id.cell_detail_overview)
 
-        // On affiche le titre du film dans l'App Bar
+
         this.title = movie.title
 
         Glide
@@ -38,7 +47,7 @@ class MovieDetailActivity : AppCompatActivity() {
             .load(movie.posterUrl)
             .into(cell_detail_picture)
 
-        cell_detail_overview.text = movie.overview
+        mywebview!!.loadData(movie.overview, "text/html", "utf-8")
     }
 }
 

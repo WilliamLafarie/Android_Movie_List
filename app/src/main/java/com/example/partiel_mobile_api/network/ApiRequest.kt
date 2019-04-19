@@ -1,4 +1,4 @@
-package com.example.partiel_mobile_api.Network
+package com.example.partiel_mobile_api.network
 
 import android.util.Log
 import com.android.volley.Request
@@ -10,8 +10,16 @@ import com.example.partiel_mobile_api.model.Movie
 import org.json.JSONException
 import org.json.JSONObject
 
+/*
+
+    [Class ApiRequest]
+
+*/
+
 class ApiRequest {
+
     companion object {
+
         fun requestMovie(success: (movies: MutableList<Movie>) -> Unit, error: (error: VolleyError?) ->Unit) {
             val apiUrl = ApiConnect.searchUrl()
             Log.wtf("URL", apiUrl)
@@ -31,10 +39,10 @@ class ApiRequest {
                         for (i in 0 until dataMovie.length()) {
                             var movie = dataMovie.getJSONObject(i)
                             var title = movie.get("name").toString()
-                            var poster_url = movie.getJSONObject("image").get("small_url").toString()
+                            var posterUrl = movie.getJSONObject("image").get("small_url").toString()
                             var overview = movie.get("description").toString()
 
-                            listOfMovies.add(Movie(title,poster_url,overview))
+                            listOfMovies.add(Movie(title,posterUrl,overview))
                         }
 
                     } catch (e:JSONException) {
